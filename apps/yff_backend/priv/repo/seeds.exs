@@ -19,10 +19,10 @@ defmodule YFFBackend.DatabaseSeeder do
     artists() |> Enum.each(&insert_artist/1)
   end
 
-  def insert_artist(%{"name" => name} = artist) do
+  def insert_artist(%{"name" => name} = artist_attrs) do
     case Program.get_artist_by_name(name) do
-      nil ->  Program.create_artist(artist)
-      %Artist{} = artist -> {:ok, artist}
+      nil ->  Program.create_artist(artist_attrs)
+      %Artist{} = existing -> Program.update_artist(existing, artist_attrs)
     end
   end
 
