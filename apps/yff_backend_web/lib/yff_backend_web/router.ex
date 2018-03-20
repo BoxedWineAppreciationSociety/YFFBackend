@@ -10,4 +10,6 @@ defmodule YFFBackendWeb.Router do
 
     resources "/artists", ArtistController, only: [:index, :show]
   end
+
+  forward "/graphql", Absinthe.Plug, schema: YFFBackendWeb.Schema
 end

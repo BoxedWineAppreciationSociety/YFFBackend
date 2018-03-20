@@ -42,7 +42,10 @@ defmodule YFFBackendWeb.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:gettext, "~> 0.11"},
       {:yff_backend, in_umbrella: true},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:absinthe, "~> 1.4.0"},
+      {:absinthe_plug, "~> 1.4"},
+      {:poison, "~> 3.1.0"}
     ]
   end
 
