@@ -38,6 +38,46 @@ defmodule YFFBackend.Program do
   def get_artist!(id), do: Repo.get!(Artist, id)
 
   @doc """
+  Gets a single artist by name.
+
+  Raises `Ecto.NoResultsError` if the Artist does not exist.
+
+  ## Examples
+
+      iex> get_artist_by_name!("Slipknot")
+      %Artist{}
+
+      iex> get_artist!("Taylor Swift")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_artist_by_name!(name) do
+    query = from a in Artist, where: a.name == ^name
+
+    Repo.one!(query)
+  end
+
+  @doc """
+  Gets a single artist by name.
+
+  Raises `Ecto.NoResultsError` if the Artist does not exist.
+
+  ## Examples
+
+      iex> get_artist_by_name!("Slipknot")
+      %Artist{}
+
+      iex> get_artist!("Taylor Swift")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_artist_by_name(name) do
+    query = from a in Artist, where: a.name == ^name
+
+    Repo.one(query)
+  end
+
+  @doc """
   Creates a artist.
 
   ## Examples

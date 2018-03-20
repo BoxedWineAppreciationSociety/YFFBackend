@@ -29,6 +29,26 @@ defmodule YFFBackend.ProgramTest do
       assert Program.get_artist!(artist.id) == artist
     end
 
+    test "get_artist_by_name!/1 returns the artist with given name" do
+      artist = artist_fixture()
+      assert Program.get_artist_by_name!(artist.name) == artist
+    end
+
+    test "get_artist_by_name!/1 raises Ecto.NoResultsError if artist does not exist" do
+      assert_raise Ecto.NoResultsError, fn ->
+        Program.get_artist_by_name!("Jimi Hendrix") == "Not true"
+      end
+    end
+
+    test "get_artist_by_name/1 returns the artist with given name" do
+      artist = artist_fixture()
+      assert Program.get_artist_by_name(artist.name) == artist
+    end
+
+    test "get_artist_by_name/1 returns nil if the artist does not exist" do
+      assert Program.get_artist_by_name("Jimi Hendrix") == nil
+    end
+
     test "create_artist/1 with valid data creates a artist" do
       assert {:ok, %Artist{} = artist} = Program.create_artist(@valid_attrs)
       assert artist.name == "some name"
