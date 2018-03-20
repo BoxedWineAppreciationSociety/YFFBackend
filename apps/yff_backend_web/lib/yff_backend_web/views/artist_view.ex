@@ -12,6 +12,8 @@ defmodule YFFBackendWeb.ArtistView do
 
   def render("artist.json", %{artist: artist}) do
     %{id: artist.id,
-      name: artist.name}
+      name: artist.name,
+      summary: artist.summary,
+      website: artist.website}
   end
 end
