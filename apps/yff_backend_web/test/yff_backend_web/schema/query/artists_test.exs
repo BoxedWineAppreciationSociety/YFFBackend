@@ -35,4 +35,22 @@ defmodule YFFBackendWeb.Schema.Query.ArtistsTest do
       }
     }
   end
+
+  @query """
+    query($filter: ArtistFilter!) {
+      artists(filter: $filter) {
+        name
+      }
+    }
+  """
+  @variables %{filter: %{matching: "Slip"}}
+  test "artists filtered by matching name" do
+    response = get(build_conn(), "/graphql", query: @query, variables: @variables)
+    assert %{
+      "data" => %{
+        "artists" => [%{"name" => "Slipknot"}]
+      }
+    } == json_response(response, 200)
+  end
+
 end

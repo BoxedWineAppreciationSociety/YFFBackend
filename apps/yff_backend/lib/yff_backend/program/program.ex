@@ -9,16 +9,33 @@ defmodule YFFBackend.Program do
   alias YFFBackend.Program.Artist
 
   @doc """
-  Returns the list of artists.
+  Returns the list of artists, with requested filters
 
   ## Examples
 
       iex> list_artists()
       [%Artist{}, ...]
 
+      iex> list_artists(%{filter: %{matching: "Foo"}})
+      [%Artist{}, ...]
+
   """
-  def list_artists do
-    Repo.all(Artist)
+  def list_artists(args \\ %{})
+  def list_artists(args) do
+    args
+    |> Enum.reduce(Artist, fn
+      {:filter, filter}, query ->
+        query |> filter_with(filter)
+    end)
+    |> order_by(:name)
+    |> Repo.all
+  end
+
+  defp filter_with(query, filter) do
+    Enum.reduce(filter, query, fn
+      {:matching, match}, query ->
+        from q in query, where: ilike(q.name, ^"%#{match}%")
+    end)
   end
 
   @doc """
