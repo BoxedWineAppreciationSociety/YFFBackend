@@ -38,7 +38,8 @@ defmodule YFFBackend.Mixfile do
     [
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:ecto_enum, "~> 1.0"}
     ]
   end
 
