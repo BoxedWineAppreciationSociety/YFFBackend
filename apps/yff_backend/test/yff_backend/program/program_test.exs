@@ -1,4 +1,6 @@
 defmodule YFFBackend.ProgramTest do
+  require IEx
+
   use YFFBackend.DataCase
 
   alias YFFBackend.Program
@@ -80,6 +82,70 @@ defmodule YFFBackend.ProgramTest do
     test "change_artist/1 returns a artist changeset" do
       artist = artist_fixture()
       assert %Ecto.Changeset{} = Program.change_artist(artist)
+    end
+  end
+
+  describe "performances" do
+    alias YFFBackend.Program.Artist
+    alias YFFBackend.Program.Performance
+
+    @artist_attrs %{name: "Slayer"}
+
+    def attrs_for_performance(%Artist{} = artist, attrs \\ %{}) do
+      {:ok, time, 0} = DateTime.from_iso8601("2018-03-24T14:30:00.000Z")
+
+      attrs
+      |> Enum.into(%{day: :saturday, time: time, artist_id: artist.id})
+    end
+
+    setup do
+      {:ok, artist} = Program.create_artist(@artist_attrs)
+      {:ok, performance} = Program.create_performance(attrs_for_performance(artist))
+      performance_with_artist = Performance
+        |> preload(:artist)
+        |> where(id: ^performance.id)
+        |> Repo.one!
+
+      %{artist: artist, performance: performance_with_artist}
+    end
+
+    test "create_performance/1 with valid data creates a performance", %{artist: artist} do
+      assert {:ok, %Performance{}} = Program.create_performance(attrs_for_performance(artist))
+    end
+
+    test "list_performances/0 returns all performances", %{performance: performance} do
+      assert Program.list_performances() == [performance]
+    end
+
+    test "get_performance!/1 returns the performance with given id", %{performance: performance} do
+      assert Program.get_performance!(performance.id) == performance
+    end
+
+    @invalid_attrs %{artist_id: nil}
+
+    test "create_performance/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Program.create_performance(@invalid_attrs)
+    end
+
+    test "update_performance/2 with valid data updates the performance", %{performance: performance} do
+      {:ok, time, 0} = DateTime.from_iso8601("2018-03-25T14:30:00.000Z")
+      update_attrs = %{time: time, day: :sunday}
+      assert {:ok, performance} = Program.update_performance(performance, update_attrs)
+      assert %Performance{} = performance
+    end
+
+    test "update_performance/2 with invalid data returns error changeset", %{performance: performance} do
+      assert {:error, %Ecto.Changeset{}} = Program.update_performance(performance, @invalid_attrs)
+      assert performance == Program.get_performance!(performance.id)
+    end
+
+    test "delete_performance/1 deletes the performance", %{performance: performance} do
+      assert {:ok, %Performance{}} = Program.delete_performance(performance)
+      assert_raise Ecto.NoResultsError, fn -> Program.get_performance!(performance.id) end
+    end
+
+    test "change_performance/1 returns a performance changeset", %{performance: performance} do
+      assert %Ecto.Changeset{} = Program.change_performance(performance)
     end
   end
 end
