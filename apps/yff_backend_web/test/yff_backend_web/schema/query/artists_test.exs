@@ -50,4 +50,31 @@ defmodule YFFBackendWeb.Schema.Query.ArtistsTest do
       %{"name" => "The Ladybirds" }
     ]
   end
+
+  @query """
+    query($id: ID!) {
+      artist(id: $id) {
+        id
+        name
+        summary
+      }
+    }
+  """
+  test "get artist by ID" do
+    artist_id = YFFBackend.Program.get_artist_by_name("The Coconut Kids").id
+    variables = %{id: artist_id}
+    response = get(build_conn(), "/graphql", query: @query, variables: variables)
+
+    assert %{
+      "data" => %{
+        "artist" => artist_response
+      }
+    } = json_response(response, 200)
+
+    assert %{
+      "id" => ^artist_id,
+      "name" => "The Coconut Kids",
+      "summary" => "Infectiously fun" <> _
+    } = artist_response
+  end
 end

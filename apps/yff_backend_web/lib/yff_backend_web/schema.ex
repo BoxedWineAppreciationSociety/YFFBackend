@@ -9,6 +9,11 @@ defmodule YFFBackendWeb.Schema do
       resolve &Resolvers.Program.artists/3
     end
 
+    field :artist, :artist do
+      arg :id, non_null(:id)
+      resolve &Resolvers.Program.get_artist/3
+    end
+
     field :performances, list_of(:performance) do
       resolve &Resolvers.Program.performances/3
     end
