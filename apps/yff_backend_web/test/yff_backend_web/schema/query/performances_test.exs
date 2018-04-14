@@ -3,25 +3,8 @@ defmodule YFFBackendWeb.Schema.Query.PerformancesTest do
 
   alias YFFBackend.Program
 
-  @artists [
-    %{name: "U2"},
-    %{name: "Slipknot"},
-    %{name: "Taylor Swift"}
-  ]
-
   setup do
-    @artists
-    |> Enum.each(&Program.create_artist/1)
-
-    @artists
-    |> Enum.map(fn artist ->
-      {:ok, performance} = Program.create_performance(%{
-        time: DateTime.utc_now,
-        artist_id: Program.get_artist_by_name!(artist.name).id
-      })
-      performance
-    end)
-
+    YFFBackend.DatabaseSeeder.insert_all!()
     :ok
   end
 

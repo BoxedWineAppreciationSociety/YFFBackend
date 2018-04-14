@@ -60,6 +60,11 @@ defmodule YFFBackend.Program do
   def get_artist!(id), do: Repo.get!(Artist, id)
 
   @doc """
+  Gets a single artist
+  """
+  def get_artist(id), do: Repo.get(Artist, id)
+
+  @doc """
   Gets a single artist by name.
 
   Raises `Ecto.NoResultsError` if the Artist does not exist.
