@@ -3,7 +3,7 @@ defmodule YFFBackendWeb.Resolvers.Program do
     {:ok, YFFBackend.Program.list_artists(filters)}
   end
 
-  def artists(_, _, _), do: {:ok, YFFBackend.Program.list_artists() }
+  def artists(_, args, _), do: {:ok, YFFBackend.Program.list_artists(args) }
 
   def get_artist(_, %{id: id}, _), do: {:ok, YFFBackend.Program.get_artist!(id)}
 

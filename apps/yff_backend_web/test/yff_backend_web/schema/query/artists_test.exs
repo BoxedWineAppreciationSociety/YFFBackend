@@ -52,6 +52,28 @@ defmodule YFFBackendWeb.Schema.Query.ArtistsTest do
   end
 
   @query """
+    {
+      artists(order: DESC) {
+        name
+      }
+    }
+  """
+  test "artists in descending order" do
+    response = get(build_conn(), "/graphql", query: @query)
+    assert %{
+      "data" => %{
+        "artists" => artists_response
+      }
+    } = json_response(response, 200)
+
+    assert Enum.take(artists_response, 3) == [
+      %{"name" => "Yoga Loves Music"},
+      %{"name" => "Yackandandah Community Choir"},
+      %{"name" => "William Alexander"}
+    ]
+  end
+
+  @query """
     query($id: ID!) {
       artist(id: $id) {
         id

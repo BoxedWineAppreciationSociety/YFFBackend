@@ -6,6 +6,7 @@ defmodule YFFBackendWeb.Schema do
   query do
     field :artists, list_of(:artist) do
       arg :filter, :artist_filter
+      arg :order, type: :sort_order, default_value: :asc
       resolve &Resolvers.Program.artists/3
     end
 
@@ -40,5 +41,10 @@ defmodule YFFBackendWeb.Schema do
     field :artist, type: :artist do
       resolve &Resolvers.Program.artist_for_performance/3
     end
+  end
+
+  enum :sort_order do
+    value :asc
+    value :desc
   end
 end

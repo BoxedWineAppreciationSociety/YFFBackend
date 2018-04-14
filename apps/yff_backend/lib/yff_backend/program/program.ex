@@ -23,12 +23,17 @@ defmodule YFFBackend.Program do
   def list_artists(args \\ %{})
   def list_artists(args) do
     args
-    |> Enum.reduce(Artist, fn
+    |> artists_query
+    |> Repo.all
+  end
+
+  def artists_query(args) do
+    Enum.reduce(args, Artist, fn
+      {:order, order}, query ->
+        query |> order_by({^order, :name})
       {:filter, filter}, query ->
         query |> filter_with(filter)
     end)
-    |> order_by(:name)
-    |> Repo.all
   end
 
   defp filter_with(query, filter) do
