@@ -1,17 +1,8 @@
 defmodule YFFBackendWeb.Schema.Query.ArtistsTest do
   use YFFBackendWeb.ConnCase, async: true
 
-  alias YFFBackend.Program
-
-  @artists [
-    %{name: "U2"},
-    %{name: "Slipknot"},
-    %{name: "Taylor Swift"}
-  ]
-
   setup do
-    @artists
-    |> Enum.each(&Program.create_artist/1)
+    YFFBackend.DatabaseSeeder.insert_all!()
   end
 
   @query """
@@ -21,19 +12,21 @@ defmodule YFFBackendWeb.Schema.Query.ArtistsTest do
       }
     }
   """
-  test "artists field returns artists" do
+  test "artist field returns list of artists" do
     conn = build_conn()
     conn = post conn, "/graphql", query: @query
 
-    assert json_response(conn, 200) == %{
+    assert %{
       "data" => %{
-        "artists" => [
-          %{"name" => "Slipknot"},
-          %{"name" => "Taylor Swift"},
-          %{"name" => "U2"}
-        ]
+        "artists" => artist_response
       }
-    }
+    } = json_response(conn, 200)
+
+    assert Enum.take(artist_response, 3) == [
+      %{"name" => "Alawishus Jones & the Outright Lies"},
+      %{"name" => "Bohemian Nights"},
+      %{"name" => "Bruce Watson"}
+    ]
   end
 
   @query """
@@ -43,13 +36,18 @@ defmodule YFFBackendWeb.Schema.Query.ArtistsTest do
       }
     }
   """
-  @variables %{filter: %{matching: "Slip"}}
-  test "artists filtered by matching name" do
+  @variables %{filter: %{matching: "Lady"}}
+  test "artist filtered by matching name" do
     response = get(build_conn(), "/graphql", query: @query, variables: @variables)
     assert %{
       "data" => %{
-        "artists" => [%{"name" => "Slipknot"}]
+        "artists" => artists_response
       }
-    } == json_response(response, 200)
+    } = json_response(response, 200)
+
+    assert artists_response == [
+      %{"name" => "Lady Valiant"},
+      %{"name" => "The Ladybirds" }
+    ]
   end
 end
