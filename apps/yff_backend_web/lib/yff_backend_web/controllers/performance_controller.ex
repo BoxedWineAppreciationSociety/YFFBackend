@@ -2,7 +2,6 @@ defmodule YFFBackendWeb.PerformanceController do
   use YFFBackendWeb, :controller
 
   alias YFFBackend.Program
-  alias YFFBackend.Program.Performance
 
   action_fallback YFFBackendWeb.FallbackController
 

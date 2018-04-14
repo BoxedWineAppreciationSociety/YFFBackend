@@ -173,6 +173,7 @@ defmodule YFFBackend.Program do
   def list_performances do
     Performance
     |> preload(:artist)
+    |> order_by([p], p.time)
     |> Repo.all
   end
 

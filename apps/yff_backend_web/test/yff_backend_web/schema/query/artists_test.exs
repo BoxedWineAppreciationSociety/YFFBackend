@@ -52,5 +52,4 @@ defmodule YFFBackendWeb.Schema.Query.ArtistsTest do
       }
     } == json_response(response, 200)
   end
-
 end
