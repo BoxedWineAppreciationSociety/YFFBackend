@@ -16,6 +16,7 @@ defmodule YFFBackendWeb.Schema do
     end
 
     field :performances, list_of(:performance) do
+      arg :day, :day
       resolve &Resolvers.Program.performances/3
     end
   end
@@ -36,7 +37,9 @@ defmodule YFFBackendWeb.Schema do
   object :performance do
     field :id, :string
     field :time, :string
-    field :day, :string
+    field :day, :day do
+      resolve &Resolvers.Program.day_for_performance/3
+    end
 
     field :artist, type: :artist do
       resolve &Resolvers.Program.artist_for_performance/3
@@ -46,5 +49,11 @@ defmodule YFFBackendWeb.Schema do
   enum :sort_order do
     value :asc
     value :desc
+  end
+
+  enum :day do
+    value :friday
+    value :saturday
+    value :sunday
   end
 end

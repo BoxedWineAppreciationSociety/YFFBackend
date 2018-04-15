@@ -3,6 +3,7 @@ defmodule YFFBackend.Program.Performance do
   import Ecto.Changeset
 
   alias YFFBackend.Program.Artist
+  alias __MODULE__
 
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -21,5 +22,11 @@ defmodule YFFBackend.Program.Performance do
     |> cast(attrs, [:artist_id, :time, :day])
     |> foreign_key_constraint(:artist)
     |> validate_required([:time, :artist_id])
+  end
+
+  @timezone "Australia/Melbourne"
+  def weekday(%Performance{time: time}) do
+    Timex.to_datetime(time, @timezone)
+    |> Timex.weekday()
   end
 end

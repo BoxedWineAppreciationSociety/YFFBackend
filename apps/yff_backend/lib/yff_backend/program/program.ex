@@ -180,12 +180,27 @@ defmodule YFFBackend.Program do
       [%Performance{}, ...]
 
   """
-  def list_performances do
+  def list_performances(day \\ :all)
+  def list_performances(:all) do
     Performance
     |> preload(:artist)
     |> order_by([p], p.time)
     |> Repo.all
   end
+  # TODO: write tests
+  def list_performances(day) do
+    list_performances(:all)
+    |> Enum.filter(fn perf ->
+      Performance.weekday(perf) == day_weekday(day)
+    end)
+  end
+
+  @friday 5
+  @saturday 6
+  @sunday 7
+  defp day_weekday(:friday), do: @friday
+  defp day_weekday(:saturday), do: @saturday
+  defp day_weekday(:sunday), do: @sunday
 
   @doc """
   Gets a single performance.
