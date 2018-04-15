@@ -9,6 +9,7 @@ defmodule YFFBackendWeb.Router do
     pipe_through :api
 
     resources "/artists", ArtistController, only: [:index, :show]
+    resources "/performances", PerformanceController, only: [:index, :show]
   end
 
   forward "/graphql", Absinthe.Plug, schema: YFFBackendWeb.Schema

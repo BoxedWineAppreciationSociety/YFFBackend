@@ -23,12 +23,17 @@ defmodule YFFBackend.Program do
   def list_artists(args \\ %{})
   def list_artists(args) do
     args
-    |> Enum.reduce(Artist, fn
+    |> artists_query
+    |> Repo.all
+  end
+
+  def artists_query(args) do
+    Enum.reduce(args, Artist, fn
+      {:order, order}, query ->
+        query |> order_by({^order, :name})
       {:filter, filter}, query ->
         query |> filter_with(filter)
     end)
-    |> order_by(:name)
-    |> Repo.all
   end
 
   defp filter_with(query, filter) do
@@ -53,6 +58,11 @@ defmodule YFFBackend.Program do
 
   """
   def get_artist!(id), do: Repo.get!(Artist, id)
+
+  @doc """
+  Gets a single artist
+  """
+  def get_artist(id), do: Repo.get(Artist, id)
 
   @doc """
   Gets a single artist by name.
@@ -157,5 +167,123 @@ defmodule YFFBackend.Program do
   """
   def change_artist(%Artist{} = artist) do
     Artist.changeset(artist, %{})
+  end
+
+  alias YFFBackend.Program.Performance
+
+  @doc """
+  Returns the list of performances.
+
+  ## Examples
+
+      iex> list_performances()
+      [%Performance{}, ...]
+
+  """
+  def list_performances(day \\ :all)
+  def list_performances(:all) do
+    Performance
+    |> preload(:artist)
+    |> order_by([p], p.time)
+    |> Repo.all
+  end
+  # TODO: write tests
+  def list_performances(day) do
+    list_performances(:all)
+    |> Enum.filter(fn perf ->
+      Performance.weekday(perf) == day_weekday(day)
+    end)
+  end
+
+  @friday 5
+  @saturday 6
+  @sunday 7
+  defp day_weekday(:friday), do: @friday
+  defp day_weekday(:saturday), do: @saturday
+  defp day_weekday(:sunday), do: @sunday
+
+  @doc """
+  Gets a single performance.
+
+  Raises `Ecto.NoResultsError` if the Performance does not exist.
+
+  ## Examples
+
+      iex> get_performance!(123)
+      %Performance{}
+
+      iex> get_performance!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_performance!(id) do
+    Performance
+    |> preload(:artist)
+    |> Repo.get!(id)
+  end
+
+  @doc """
+  Creates a performance.
+
+  ## Examples
+
+      iex> create_performance(%{field: value})
+      {:ok, %Performance{}}
+
+      iex> create_performance(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_performance(attrs \\ %{}) do
+    %Performance{}
+    |> Performance.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a performance.
+
+  ## Examples
+
+      iex> update_performance(performance, %{field: new_value})
+      {:ok, %Performance{}}
+
+      iex> update_performance(performance, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_performance(%Performance{} = performance, attrs) do
+    performance
+    |> Performance.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Performance.
+
+  ## Examples
+
+      iex> delete_performance(performance)
+      {:ok, %Performance{}}
+
+      iex> delete_performance(performance)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_performance(%Performance{} = performance) do
+    Repo.delete(performance)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking performance changes.
+
+  ## Examples
+
+      iex> change_performance(performance)
+      %Ecto.Changeset{source: %Performance{}}
+
+  """
+  def change_performance(%Performance{} = performance) do
+    Performance.changeset(performance, %{})
   end
 end

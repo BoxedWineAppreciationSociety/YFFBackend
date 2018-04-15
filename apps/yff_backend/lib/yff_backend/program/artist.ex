@@ -2,6 +2,7 @@ defmodule YFFBackend.Program.Artist do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias YFFBackend.Program.Performance
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -9,6 +10,8 @@ defmodule YFFBackend.Program.Artist do
     field :name, :string
     field :summary, :string
     field :website, :string
+
+    has_many :performances, Performance
 
     timestamps()
   end
