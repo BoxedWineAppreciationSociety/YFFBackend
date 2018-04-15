@@ -1,6 +1,4 @@
 defmodule YFFBackend.ProgramTest do
-  require IEx
-
   use YFFBackend.DataCase
 
   alias YFFBackend.Program
